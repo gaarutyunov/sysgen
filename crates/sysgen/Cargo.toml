@@ -1,0 +1,28 @@
+[package]
+name = "sysgen"
+version = "0.1.0"
+edition = "2021"
+description = "SysML v2 spec-driven code generation with AI enforcement"
+
+[[bin]]
+name = "sysgen"
+path = "src/main.rs"
+
+[dependencies]
+syster-base        = { workspace = true }
+goose              = { workspace = true }
+sysgen-macros      = { path = "../sysgen-macros" }
+tokio              = { workspace = true }
+anyhow             = { workspace = true }
+thiserror          = { workspace = true }
+serde              = { workspace = true }
+serde_json         = { workspace = true }
+tracing            = { workspace = true }
+tracing-subscriber = { workspace = true }
+clap               = { workspace = true }
+futures            = { workspace = true }
+walkdir            = { workspace = true }
+sha2               = { workspace = true }
+hex                = { workspace = true }
+cargo_metadata     = { workspace = true }
+notify             = { workspace = true }

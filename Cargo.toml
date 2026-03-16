@@ -1,0 +1,37 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/sysgen",
+    "crates/sysgen-macros",
+    "crates/sysgen-trace",
+]
+
+[workspace.dependencies]
+# Pin to specific commits — update deliberately
+syster-base = { git = "https://github.com/jade-codes/syster-base", rev = "72092d09e38099c1a73a46a22e7d19046be1002a" }
+goose       = { git = "https://github.com/block/goose",            rev = "3a15b01dccb20a26b7839fff408a26c80c0d2226", package = "goose" }
+
+tokio       = { version = "1", features = ["full"] }
+anyhow      = "1"
+thiserror   = "1"
+serde       = { version = "1", features = ["derive"] }
+serde_json  = "1"
+tracing     = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+clap        = { version = "4", features = ["derive"] }
+futures     = "0.3"
+walkdir     = "2"
+sha2        = "0.10"
+hex         = "0.4"
+cargo_metadata = "0.18"
+syn         = { version = "2", features = ["full", "visit"] }
+quote       = "1"
+proc-macro2 = "1"
+linkme      = "0.3"
+notify      = "6"
+
+[patch."https://github.com/jade-codes/syster-base"]
+syster-base = { path = "vendor/syster-base" }
+
+[patch."https://github.com/block/goose"]
+goose = { path = "vendor/goose" }

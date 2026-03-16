@@ -1,0 +1,17 @@
+[package]
+name = "sysgen-trace"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "cargo-sysgen-trace"
+path = "src/main.rs"
+
+[dependencies]
+syster-base = { workspace = true }
+anyhow      = { workspace = true }
+serde       = { workspace = true }
+serde_json  = { workspace = true }
+syn         = { workspace = true }
+walkdir     = { workspace = true }
+clap        = { workspace = true }
