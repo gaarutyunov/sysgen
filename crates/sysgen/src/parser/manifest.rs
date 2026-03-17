@@ -1,16 +1,14 @@
-/// Wraps syster-base manifest parsing.
+/// SysML manifest metadata (workspace name and configuration).
 pub struct SysmlManifestParser {
-    inner: syster_base::SysmlManifest,
+    name: String,
 }
 
 impl SysmlManifestParser {
     pub fn new(name: impl Into<String>) -> Self {
-        Self {
-            inner: syster_base::SysmlManifest::new(name),
-        }
+        Self { name: name.into() }
     }
 
     pub fn name(&self) -> &str {
-        &self.inner.name
+        &self.name
     }
 }

@@ -30,8 +30,5 @@ proc-macro2 = "1"
 linkme      = "0.3"
 notify      = "6"
 
-[patch."https://github.com/jade-codes/syster-base"]
-syster-base = { path = "vendor/syster-base" }
-
 [patch."https://github.com/block/goose"]
 goose = { path = "vendor/goose" }
