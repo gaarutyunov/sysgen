@@ -1,16 +1,16 @@
-/// Wraps syster-base workspace parsing.
+use std::path::{Path, PathBuf};
+
+/// SysML workspace pointing to a directory containing .sysml spec files.
 pub struct SysmlWorkspaceParser {
-    inner: syster_base::SysmlWorkspace,
+    path: PathBuf,
 }
 
 impl SysmlWorkspaceParser {
-    pub fn new(path: impl Into<std::path::PathBuf>) -> Self {
-        Self {
-            inner: syster_base::SysmlWorkspace::new(path),
-        }
+    pub fn new(path: impl Into<PathBuf>) -> Self {
+        Self { path: path.into() }
     }
 
-    pub fn path(&self) -> &std::path::Path {
-        &self.inner.path
+    pub fn path(&self) -> &Path {
+        &self.path
     }
 }

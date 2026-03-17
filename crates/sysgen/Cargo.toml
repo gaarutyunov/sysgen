@@ -26,3 +26,4 @@ sha2               = { workspace = true }
 hex                = { workspace = true }
 cargo_metadata     = { workspace = true }
 notify             = { workspace = true }
+
