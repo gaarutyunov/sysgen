@@ -8,7 +8,8 @@ members = [
 
 [workspace.dependencies]
 # Pin to specific commits — update deliberately
-syster-base = { git = "https://github.com/jade-codes/syster-base", rev = "72092d09e38099c1a73a46a22e7d19046be1002a" }
+# Using fork with VerificationCaseDefinition fix (upstream: jade-codes/syster-base)
+syster-base = { git = "https://github.com/gaarutyunov/syster-base", rev = "2ca5882575496b47058ea2eed761b61ace207578" }
 goose       = { git = "https://github.com/block/goose",            rev = "3a15b01dccb20a26b7839fff408a26c80c0d2226", package = "goose" }
 
 tokio       = { version = "1", features = ["full"] }

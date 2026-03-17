@@ -40,14 +40,12 @@ fn syster_parses_requirement_def() {
     );
 }
 
-/// Verifies that `verification def` is parsed and appears in the symbol table,
-/// confirming `verify` construct support.
-///
-/// Note: syster-base currently classifies `verification def` as `AnalysisCaseDefinition`
-/// rather than a dedicated `VerificationCaseDefinition` kind. The symbol is present and
-/// queryable; a separate upstream PR would be needed to add a distinct kind.
+/// Verifies that `verification def` is parsed and appears in the symbol table
+/// with the correct `VerificationCaseDefinition` kind (fixed in fork).
 #[test]
 fn syster_parses_verification_def() {
+    use syster::hir::SymbolKind;
+
     let mut host = AnalysisHost::new();
     let errors = host.set_file_content("vehicle.sysml", FIXTURE);
     assert!(
@@ -58,11 +56,14 @@ fn syster_parses_verification_def() {
     let analysis = host.analysis();
     let index = analysis.symbol_index();
 
-    assert!(
-        index
-            .lookup_qualified("VehicleRequirements::MassVerification")
-            .is_some(),
-        "MassVerification (verification def) not found in symbol table"
+    let sym = index
+        .lookup_qualified("VehicleRequirements::MassVerification")
+        .expect("MassVerification (verification def) not found in symbol table");
+    assert_eq!(
+        sym.kind,
+        SymbolKind::VerificationCaseDefinition,
+        "MassVerification should be VerificationCaseDefinition, not {:?}",
+        sym.kind
     );
 }
 
