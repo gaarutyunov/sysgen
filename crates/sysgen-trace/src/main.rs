@@ -4,7 +4,10 @@ mod collector;
 mod report;
 
 #[derive(clap::Parser)]
-#[command(name = "cargo-sysgen-trace", about = "Standalone SysML traceability checker")]
+#[command(
+    name = "cargo-sysgen-trace",
+    about = "Standalone SysML traceability checker"
+)]
 struct Cli {
     #[command(subcommand)]
     command: Command,
