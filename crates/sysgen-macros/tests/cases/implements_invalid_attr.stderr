@@ -1,0 +1,5 @@
+error: expected string literal
+ --> tests/cases/implements_invalid_attr.rs:3:14
+  |
+3 | #[implements(42)]
+  |              ^^
