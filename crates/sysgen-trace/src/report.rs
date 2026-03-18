@@ -109,7 +109,10 @@ impl TraceabilityReport {
     }
 }
 
-pub fn build_report(manifest: &SpecManifest, annotations: &CollectedAnnotations) -> TraceabilityReport {
+pub fn build_report(
+    manifest: &SpecManifest,
+    annotations: &CollectedAnnotations,
+) -> TraceabilityReport {
     let mut impl_by_req: HashMap<String, Vec<ImplAnnotation>> = HashMap::new();
     let mut verify_by_req: HashMap<String, Vec<VerifyAnnotation>> = HashMap::new();
 
