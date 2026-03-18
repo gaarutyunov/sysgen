@@ -1,10 +1,10 @@
 /// Drives the agent generation loop until the spec is satisfied.
 pub struct AgentLoop {
-    agent: goose::Agent,
+    agent: goose::agents::Agent,
 }
 
 impl AgentLoop {
-    pub fn new(agent: goose::Agent) -> Self {
+    pub fn new(agent: goose::agents::Agent) -> Self {
         Self { agent }
     }
 
