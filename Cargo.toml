@@ -30,6 +30,7 @@ quote       = "1"
 proc-macro2 = { version = "1", features = ["span-locations"] }
 linkme      = "0.3"
 notify      = "6"
+tempfile    = "3"
 
 [patch."https://github.com/block/goose"]
 goose = { path = "vendor/goose" }

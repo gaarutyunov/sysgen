@@ -31,3 +31,5 @@ hex                = { workspace = true }
 cargo_metadata     = { workspace = true }
 notify             = { workspace = true }
 
+[dev-dependencies]
+tempfile = { workspace = true }
