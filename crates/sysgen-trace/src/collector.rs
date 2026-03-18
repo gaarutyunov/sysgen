@@ -157,43 +157,6 @@ fn get_line(ident: &syn::Ident) -> usize {
     ident.span().start().line
 }
 
-// ---------------------------------------------------------------------------
-// Legacy adapter — used by main.rs / report.rs
-// ---------------------------------------------------------------------------
-
-pub struct TraceEntry {
-    pub id: String,
-    pub location: String,
-}
-
-/// Collects traceability annotations from Rust source files.
-pub struct TraceCollector<'a> {
-    src: &'a Path,
-}
-
-impl<'a> TraceCollector<'a> {
-    pub fn new(src: &'a Path) -> Self {
-        Self { src }
-    }
-
-    pub fn collect(&self) -> anyhow::Result<Vec<TraceEntry>> {
-        let annotations = collect_annotations(self.src)?;
-        let mut entries: Vec<TraceEntry> = annotations
-            .implementations
-            .into_iter()
-            .map(|a| TraceEntry {
-                id: a.req_id,
-                location: format!("{}:{}", a.file.display(), a.line),
-            })
-            .chain(annotations.verifications.into_iter().map(|a| TraceEntry {
-                id: a.req_id,
-                location: format!("{}:{}", a.file.display(), a.line),
-            }))
-            .collect();
-        entries.sort_by(|a, b| a.id.cmp(&b.id));
-        Ok(entries)
-    }
-}
 
 #[cfg(test)]
 mod tests {
