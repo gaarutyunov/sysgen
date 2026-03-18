@@ -109,11 +109,7 @@ impl<'a, 'ast> syn::visit::Visit<'ast> for AnnotationVisitor<'a> {
                 .unwrap_or_default(),
             _ => String::new(),
         };
-        let line = node
-            .impl_token
-            .span
-            .start()
-            .line;
+        let line = node.impl_token.span.start().line;
         self.process_attrs(&node.attrs, &name, line);
         syn::visit::visit_item_impl(self, node);
     }
