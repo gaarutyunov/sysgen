@@ -4,6 +4,10 @@ version = "0.1.0"
 edition = "2021"
 description = "SysML v2 spec-driven code generation with AI enforcement"
 
+[lib]
+name = "sysgen"
+path = "src/lib.rs"
+
 [[bin]]
 name = "sysgen"
 path = "src/main.rs"

@@ -8,6 +8,7 @@ name = "cargo-sysgen-trace"
 path = "src/main.rs"
 
 [dependencies]
+sysgen      = { path = "../sysgen" }
 syster-base = { workspace = true }
 anyhow      = { workspace = true }
 serde       = { workspace = true }
