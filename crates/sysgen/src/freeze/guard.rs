@@ -1,8 +1,8 @@
+use anyhow::{bail, Context, Result};
 use sha2::{Digest, Sha256};
 use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
-use anyhow::{bail, Context, Result};
 use walkdir::WalkDir;
 
 pub struct SpecFreezeGuard {
@@ -40,13 +40,12 @@ impl SpecFreezeGuard {
 
         for path in &self.spec_files {
             // Store original permissions for restoration
-            let meta = fs::metadata(path)
-                .with_context(|| format!("Cannot stat {:?}", path))?;
-            self.original_permissions.insert(path.clone(), meta.permissions());
+            let meta = fs::metadata(path).with_context(|| format!("Cannot stat {:?}", path))?;
+            self.original_permissions
+                .insert(path.clone(), meta.permissions());
 
             // Compute SHA-256
-            let hash = sha256_file(path)
-                .with_context(|| format!("Cannot hash {:?}", path))?;
+            let hash = sha256_file(path).with_context(|| format!("Cannot hash {:?}", path))?;
             self.hashes.insert(path.clone(), hash);
 
             // Set read-only
@@ -70,8 +69,7 @@ impl SpecFreezeGuard {
         }
 
         for (path, expected) in &self.hashes {
-            let actual = sha256_file(path)
-                .with_context(|| format!("Cannot re-hash {:?}", path))?;
+            let actual = sha256_file(path).with_context(|| format!("Cannot re-hash {:?}", path))?;
 
             if actual != *expected {
                 bail!(
@@ -143,8 +141,7 @@ pub fn generate_gooseignore(spec_dir: &Path) -> String {
 pub fn write_gooseignore(project_root: &Path, spec_dir: &Path) -> Result<()> {
     let content = generate_gooseignore(spec_dir);
     let path = project_root.join(".gooseignore");
-    fs::write(&path, content)
-        .with_context(|| format!("Cannot write {:?}", path))?;
+    fs::write(&path, content).with_context(|| format!("Cannot write {:?}", path))?;
     tracing::debug!("Wrote .gooseignore at {:?}", path);
     Ok(())
 }
@@ -197,14 +194,28 @@ mod tests {
         guard.activate().unwrap();
 
         // Temporarily make writable to simulate tamper
-        let mut perms = fs::metadata(&path).unwrap().permissions();
-        perms.set_readonly(false);
-        fs::set_permissions(&path, perms).unwrap();
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            let mut perms = fs::metadata(&path).unwrap().permissions();
+            perms.set_mode(0o644);
+            fs::set_permissions(&path, perms).unwrap();
+        }
+        #[cfg(not(unix))]
+        {
+            let mut perms = fs::metadata(&path).unwrap().permissions();
+            #[allow(clippy::permissions_set_readonly_false)]
+            perms.set_readonly(false);
+            fs::set_permissions(&path, perms).unwrap();
+        }
         fs::write(&path, "package TAMPERED {}").unwrap();
 
         let result = guard.verify_integrity();
         assert!(result.is_err());
-        assert!(result.unwrap_err().to_string().contains("SPEC TAMPER DETECTED"));
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("SPEC TAMPER DETECTED"));
     }
 
     #[test]
