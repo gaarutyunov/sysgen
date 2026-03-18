@@ -134,6 +134,11 @@ pub fn make_user_message(content: &str) -> goose::conversation::message::Message
     goose::conversation::message::Message::user().with_text(content)
 }
 
+/// Construct an assistant [`goose::conversation::message::Message`] from a plain text string.
+pub fn make_assistant_message(content: &str) -> goose::conversation::message::Message {
+    goose::conversation::message::Message::assistant().with_text(content)
+}
+
 /// Return `true` if the tool call looks like a `text_editor` write targeting a `spec/` path.
 ///
 /// This is a best-effort observation: real enforcement is handled by the OS (read-only
@@ -261,5 +266,12 @@ mod tests {
         // Message::user() sets role to User; verify via the text content.
         let text = msg.as_concat_text();
         assert_eq!(text, "hello");
+    }
+
+    #[test]
+    fn make_assistant_message_contains_text() {
+        let msg = make_assistant_message("response");
+        let text = msg.as_concat_text();
+        assert_eq!(text, "response");
     }
 }

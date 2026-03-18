@@ -6369,9 +6369,11 @@ dependencies = [
  "goose",
  "hex",
  "notify",
+ "proc-macro2",
  "serde",
  "serde_json",
  "sha2",
+ "syn 2.0.117",
  "sysgen-macros",
  "syster-base",
  "tempfile",
@@ -6398,14 +6400,9 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap",
- "proc-macro2",
- "serde",
  "serde_json",
- "syn 2.0.117",
  "sysgen",
- "syster-base",
  "tempfile",
- "walkdir",
 ]
 
 [[package]]

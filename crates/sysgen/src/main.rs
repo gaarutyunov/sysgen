@@ -5,6 +5,7 @@ mod cli;
 mod commands;
 mod freeze;
 mod parser;
+mod traceability;
 mod validation;
 
 fn main() -> anyhow::Result<()> {
