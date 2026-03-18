@@ -157,7 +157,6 @@ fn get_line(ident: &syn::Ident) -> usize {
     ident.span().start().line
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
