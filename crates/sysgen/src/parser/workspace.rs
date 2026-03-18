@@ -185,8 +185,8 @@ mod tests {
 
     #[test]
     fn loads_requirements_from_fixture() {
-        let manifest = load_spec_manifest(Path::new("tests/fixtures/"))
-            .expect("manifest load failed");
+        let manifest =
+            load_spec_manifest(Path::new("tests/fixtures/")).expect("manifest load failed");
 
         assert_eq!(manifest.requirements.len(), 3);
         assert!(manifest
@@ -200,8 +200,8 @@ mod tests {
 
     #[test]
     fn short_name_aliases_resolve() {
-        let manifest = load_spec_manifest(Path::new("tests/fixtures/"))
-            .expect("manifest load failed");
+        let manifest =
+            load_spec_manifest(Path::new("tests/fixtures/")).expect("manifest load failed");
 
         assert!(manifest.resolve("R1").is_some());
         assert!(manifest.resolve("R2").is_some());
