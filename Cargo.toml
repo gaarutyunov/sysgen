@@ -10,7 +10,7 @@ members = [
 # Pin to specific commits — update deliberately
 # Using fork with VerificationCaseDefinition fix (upstream: jade-codes/syster-base)
 syster-base = { git = "https://github.com/gaarutyunov/syster-base", rev = "2ca5882575496b47058ea2eed761b61ace207578" }
-goose       = { git = "https://github.com/block/goose",            rev = "3a15b01dccb20a26b7839fff408a26c80c0d2226", package = "goose" }
+goose       = { git = "https://github.com/block/goose",            rev = "3a15b01dccb20a26b7839fff408a26c80c0d2226", package = "goose", default-features = false }
 
 tokio       = { version = "1", features = ["full"] }
 anyhow      = "1"
@@ -32,5 +32,3 @@ linkme      = "0.3"
 notify      = "6"
 tempfile    = "3"
 
-[patch."https://github.com/block/goose"]
-goose = { path = "vendor/goose" }

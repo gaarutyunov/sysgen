@@ -1,5 +1,4 @@
 use anyhow::Result;
-use std::sync::Arc;
 
 /// Configuration for the SysGen agent.
 pub struct AgentConfig {
@@ -9,8 +8,6 @@ pub struct AgentConfig {
     pub model: String,
     /// Working directory (the generated project root)
     pub working_dir: std::path::PathBuf,
-    /// Session ID for conversation persistence
-    pub session_id: String,
 }
 
 impl Default for AgentConfig {
@@ -19,7 +16,6 @@ impl Default for AgentConfig {
             provider: "anthropic".to_string(),
             model: "claude-sonnet-4-20250514".to_string(),
             working_dir: std::env::current_dir().unwrap_or_default(),
-            session_id: format!("sysgen-{}", unique_id()),
         }
     }
 }
@@ -35,40 +31,50 @@ impl Default for AgentConfig {
 /// Returns an error if:
 /// - The required API key environment variable is not set
 /// - The provider cannot be created
-/// - The session manager fails to initialize
+/// - The session cannot be initialized
 /// - The developer extension cannot be added
-pub async fn build_agent(config: &AgentConfig) -> Result<goose::agents::agent::Agent> {
-    use goose::agents::agent::Agent;
-    use goose::agents::extension::ExtensionConfig;
-    use goose::providers::factory::create_provider;
-    use goose::session::SessionManager;
+pub async fn build_agent(config: &AgentConfig) -> Result<goose::agents::Agent> {
+    use goose::agents::{Agent, ExtensionConfig};
+    use goose::providers::create_with_named_model;
+    use goose::session::{SessionManager, SessionType};
 
     assert_provider_env_var(&config.provider)?;
+
+    let agent = Agent::new();
+
+    let session_name = format!("sysgen-{}", unique_id());
+    let session = SessionManager::instance()
+        .create_session(config.working_dir.clone(), session_name, SessionType::User)
+        .await?;
 
     // Provider reads API key from environment:
     //   Anthropic: ANTHROPIC_API_KEY
     //   OpenAI:    OPENAI_API_KEY
     //   Google:    GOOGLE_API_KEY
     //   Ollama:    no key needed (local)
-    let provider = Arc::new(
-        create_provider(&config.provider, &config.model)
-            .map_err(|e| anyhow::anyhow!("Failed to create provider {}: {}", config.provider, e))?,
-    );
+    let provider = create_with_named_model(&config.provider, &config.model, vec![])
+        .await
+        .map_err(|e| anyhow::anyhow!("Failed to create provider {}: {}", config.provider, e))?;
 
-    let session_manager = Arc::new(SessionManager::new()?);
-    let agent = Agent::new(provider, session_manager);
+    agent
+        .update_provider(provider, &session.id)
+        .await
+        .map_err(|e| anyhow::anyhow!("Failed to set provider on agent: {}", e))?;
 
     // Add developer extension with ONLY shell and text_editor tools.
     // This gives the agent: file read/write and shell command execution.
-    // Explicitly excluding: screen_capture, image_processor (not needed).
     agent
-        .add_extension(ExtensionConfig::Builtin {
-            name: "developer".to_string(),
-            display_name: Some("Developer".to_string()),
-            timeout: Some(300), // 5 minute timeout per tool call
-            available_tools: Some(vec!["shell".to_string(), "text_editor".to_string()]),
-            bundled: None,
-        })
+        .add_extension(
+            ExtensionConfig::Builtin {
+                name: "developer".to_string(),
+                description: String::new(),
+                display_name: Some("Developer".to_string()),
+                timeout: Some(300), // 5 minute timeout per tool call
+                bundled: None,
+                available_tools: vec!["shell".to_string(), "text_editor".to_string()],
+            },
+            &session.id,
+        )
         .await
         .map_err(|e| anyhow::anyhow!("Failed to add developer extension: {}", e))?;
 
@@ -164,7 +170,6 @@ mod tests {
         let cfg = AgentConfig::default();
         assert_eq!(cfg.provider, "anthropic");
         assert!(cfg.model.contains("claude"));
-        assert!(cfg.session_id.starts_with("sysgen-"));
     }
 
     #[test]
