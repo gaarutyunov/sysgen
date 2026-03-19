@@ -79,7 +79,6 @@ async fn run_cargo_with_json(project_root: &Path, args: &[&str]) -> Result<Valid
                     DiagnosticLevel::Error | DiagnosticLevel::Warning
                 ) {
                     errors.push(FormattedError {
-                        level: format!("{:?}", diag.level),
                         message: diag.message.clone(),
                         code: diag.code.as_ref().map(|c| c.code.clone()),
                         rendered: diag.rendered.clone(),
@@ -125,7 +124,6 @@ async fn run_cargo_with_json(project_root: &Path, args: &[&str]) -> Result<Valid
 
 #[derive(Debug)]
 struct FormattedError {
-    level: String,
     message: String,
     code: Option<String>,
     rendered: Option<String>,
@@ -251,7 +249,6 @@ mod tests {
     #[test]
     fn format_errors_for_llm_includes_all_fields() {
         let errors = vec![FormattedError {
-            level: "Error".to_string(),
             message: "type mismatch".to_string(),
             code: Some("E0308".to_string()),
             rendered: Some("rendered output".to_string()),

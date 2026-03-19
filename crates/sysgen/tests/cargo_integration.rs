@@ -5,8 +5,8 @@
 //! Each test creates a throwaway Cargo library crate in a `TempDir`, runs one
 //! of the public runner functions, and asserts on the returned value.
 
-use sysgen::validation::cargo::{run_build, run_clippy, run_test, ValidationResult};
 use std::fs;
+use sysgen::validation::cargo::{run_build, run_clippy, run_test, ValidationResult};
 use tempfile::TempDir;
 
 /// Create a minimal Cargo library crate in a temporary directory.
@@ -17,9 +17,7 @@ fn make_lib_project(name: &str, src_code: &str) -> TempDir {
 
     fs::write(
         dir.path().join("Cargo.toml"),
-        format!(
-            "[package]\nname = \"{name}\"\nversion = \"0.1.0\"\nedition = \"2021\"\n"
-        ),
+        format!("[package]\nname = \"{name}\"\nversion = \"0.1.0\"\nedition = \"2021\"\n"),
     )
     .expect("write Cargo.toml");
 
@@ -60,11 +58,18 @@ async fn build_type_error_returns_structured_failure() {
 
     let result = run_build(proj.path()).await.expect("run_build failed");
 
-    let ValidationResult::Failure { output, error_count } = result else {
+    let ValidationResult::Failure {
+        output,
+        error_count,
+    } = result
+    else {
         panic!("expected Failure for code with type error, got Success");
     };
 
-    assert!(error_count > 0, "error_count should be > 0; got {error_count}");
+    assert!(
+        error_count > 0,
+        "error_count should be > 0; got {error_count}"
+    );
     assert!(
         output.contains("Error 1/"),
         "output should contain 'Error 1/N' block header; got:\n{output}"
@@ -79,10 +84,7 @@ async fn build_type_error_returns_structured_failure() {
 /// location info in the `Location: file:start:end` format.
 #[tokio::test]
 async fn build_failure_output_contains_source_location() {
-    let proj = make_lib_project(
-        "build-loc",
-        "pub fn bad() { undefined_fn(); }",
-    );
+    let proj = make_lib_project("build-loc", "pub fn bad() { undefined_fn(); }");
 
     let result = run_build(proj.path()).await.expect("run_build failed");
 
@@ -126,10 +128,7 @@ async fn build_failure_output_has_no_ansi_escape_codes() {
 /// A clean project with no warnings produces a `Success` result.
 #[tokio::test]
 async fn clippy_clean_project_returns_success() {
-    let proj = make_lib_project(
-        "clippy-ok",
-        "pub fn add(a: i32, b: i32) -> i32 { a + b }",
-    );
+    let proj = make_lib_project("clippy-ok", "pub fn add(a: i32, b: i32) -> i32 { a + b }");
 
     let result = run_clippy(proj.path()).await.expect("run_clippy failed");
 
@@ -153,15 +152,15 @@ async fn clippy_needless_return_lint_produces_failure() {
     let result = run_clippy(proj.path()).await.expect("run_clippy failed");
 
     match result {
-        ValidationResult::Failure { error_count, output } => {
+        ValidationResult::Failure {
+            error_count,
+            output,
+        } => {
             assert!(
                 error_count > 0,
                 "expected clippy to report > 0 errors; got {error_count}"
             );
-            assert!(
-                !output.is_empty(),
-                "failure output should not be empty"
-            );
+            assert!(!output.is_empty(), "failure output should not be empty");
         }
         ValidationResult::Success => {
             // Some toolchain configurations may have this lint disabled;
@@ -224,11 +223,18 @@ mod tests {
 
     let result = run_test(proj.path()).await.expect("run_test failed");
 
-    let ValidationResult::Failure { output, error_count } = result else {
+    let ValidationResult::Failure {
+        output,
+        error_count,
+    } = result
+    else {
         panic!("expected Failure for panicking test, got Success");
     };
 
-    assert!(error_count > 0, "expected at least one test failure; got {error_count}");
+    assert!(
+        error_count > 0,
+        "expected at least one test failure; got {error_count}"
+    );
     assert!(
         output.contains("intentional failure") || output.contains("always_fails"),
         "failure output should reference the panicking test; got:\n{output}"
@@ -252,11 +258,18 @@ mod tests {
 
     let result = run_test(proj.path()).await.expect("run_test failed");
 
-    let ValidationResult::Failure { output, error_count } = result else {
+    let ValidationResult::Failure {
+        output,
+        error_count,
+    } = result
+    else {
         panic!("expected Failure for assert_eq test, got Success");
     };
 
-    assert!(error_count > 0, "expected at least one test failure; got {error_count}");
+    assert!(
+        error_count > 0,
+        "expected at least one test failure; got {error_count}"
+    );
     assert!(
         output.contains("math is broken")
             || output.contains("wrong_addition")
