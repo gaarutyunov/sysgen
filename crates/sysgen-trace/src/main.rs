@@ -1,7 +1,5 @@
-mod collector;
-mod report;
-
-use report::print_text_report;
+use sysgen::traceability::collector::collect_annotations;
+use sysgen::traceability::report::{build_report, print_text_report};
 
 /// cargo-sysgen-trace: standalone traceability checker
 /// Run as: cargo sysgen-trace --spec-dir spec/ --src-dir src/
@@ -26,8 +24,8 @@ struct Args {
 fn main() -> anyhow::Result<()> {
     let args = <Args as clap::Parser>::parse();
     let manifest = sysgen::parser::workspace::load_spec_manifest(&args.spec_dir)?;
-    let annotations = collector::collect_annotations(&args.src_dir)?;
-    let report = report::build_report(&manifest, &annotations);
+    let annotations = collect_annotations(&args.src_dir)?;
+    let report = build_report(&manifest, &annotations);
 
     match args.format.as_str() {
         "json" => println!("{}", serde_json::to_string_pretty(&report)?),

@@ -8,6 +8,9 @@ pub struct AgentConfig {
     pub model: String,
     /// Working directory (the generated project root)
     pub working_dir: std::path::PathBuf,
+    /// Session identifier used to correlate agent.reply() calls across iterations.
+    /// Defaults to a unique hex timestamp string.
+    pub session_id: String,
 }
 
 impl Default for AgentConfig {
@@ -16,6 +19,7 @@ impl Default for AgentConfig {
             provider: "anthropic".to_string(),
             model: "claude-sonnet-4-20250514".to_string(),
             working_dir: std::env::current_dir().unwrap_or_default(),
+            session_id: format!("sysgen-{}", unique_id()),
         }
     }
 }
@@ -42,9 +46,12 @@ pub async fn build_agent(config: &AgentConfig) -> Result<goose::agents::Agent> {
 
     let agent = Agent::new();
 
-    let session_name = format!("sysgen-{}", unique_id());
     let session = SessionManager::instance()
-        .create_session(config.working_dir.clone(), session_name, SessionType::User)
+        .create_session(
+            config.working_dir.clone(),
+            config.session_id.clone(),
+            SessionType::User,
+        )
         .await?;
 
     // Provider reads API key from environment:

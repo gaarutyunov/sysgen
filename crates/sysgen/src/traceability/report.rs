@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-use crate::collector::{CollectedAnnotations, ImplAnnotation, VerifyAnnotation};
-use sysgen::parser::manifest::SpecManifest;
+use crate::parser::manifest::SpecManifest;
+use crate::traceability::collector::{CollectedAnnotations, ImplAnnotation, VerifyAnnotation};
 
 #[derive(Debug, serde::Serialize)]
 pub enum CoverageStatus {
@@ -221,8 +221,8 @@ mod tests {
     use std::collections::HashMap;
     use std::path::PathBuf;
 
-    use crate::collector::{CollectedAnnotations, ImplAnnotation, VerifyAnnotation};
-    use sysgen::parser::manifest::{RequirementDef, SpecManifest};
+    use crate::parser::manifest::{RequirementDef, SpecManifest};
+    use crate::traceability::collector::{CollectedAnnotations, ImplAnnotation, VerifyAnnotation};
 
     fn make_manifest(reqs: Vec<(&str, Option<&str>)>) -> SpecManifest {
         let mut requirements = HashMap::new();
