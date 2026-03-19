@@ -31,4 +31,5 @@ proc-macro2 = { version = "1", features = ["span-locations"] }
 linkme      = "0.3"
 notify      = "6"
 tempfile    = "3"
+regex       = "1"
 
