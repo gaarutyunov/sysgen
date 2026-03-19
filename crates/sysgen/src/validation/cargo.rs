@@ -32,7 +32,7 @@ pub async fn run_clippy(project_root: &Path) -> Result<ValidationResult> {
 /// Run `cargo test` in `project_root`.
 pub async fn run_test(project_root: &Path) -> Result<ValidationResult> {
     let output = Command::new("cargo")
-        .args(["test", "--", "--test-output", "immediate"])
+        .args(["test"])
         .current_dir(project_root)
         .output()
         .await?;
